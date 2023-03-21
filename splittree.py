@@ -3,9 +3,8 @@ import sys
 from anytree import Node, AnyNode, RenderTree
 from anytree.exporter import DotExporter
 from anytree.util import rightsibling
-input = "ModifiedContent<ModifiedContent<ScrollView<VStack<Optional<ModifiedContent<ForEach<Array<Chart>, String, ChartView>, _FocusSectionModifier>>>>, _SafeAreaRegionsIgnoringLayout>, _SafeAreaRegionsIgnoringLayout>"
 
-input = "SideMenuView<VStack<_ConditionalContent<ModifiedContent<ModifiedContent<ModifiedContent<_ConditionalContent<_ConditionalContent<_ConditionalContent<LibrarySongsView, LibraryArtistView>, _ConditionalContent<LibraryAlbumView, LibraryPlaylistView>>, LibraryVideoView>, _PaddingLayout>, _FocusSectionModifier>, _AppearanceActionModifier>, EmptyView>>>"
+input = "ModifiedContent<ModifiedContent<ScrollView<VStack<Optional<ModifiedContent<ForEach<Array<Chart>, String, ChartView>, _FocusSectionModifier>>>>, _SafeAreaRegionsIgnoringLayout>, _SafeAreaRegionsIgnoringLayout>"
 leading = "[\w+\, ]+<"
 x = re.findall(leading, input)
 ending = "([\w, .]+>)|[>]"
@@ -22,16 +21,16 @@ for index, item in enumerate(x):
         child = Node(str(index) + '\n' + value, parent=parentNode.parent)
         # parentNode = child
         print()
-        sys.stdout.write("\t"*index + child.name)
+        sys.stdout.write("\t"*index + item)
     else:
         child = Node(str(index) + '\n' + value, parent=parentNode)
         parentNode = child
         print()
-        sys.stdout.write("\t"*index + child.name)
+        sys.stdout.write("\t"*index + item)
 
 
 
-# DotExporter(rootNode).to_picture("udo.png")
+DotExporter(rootNode).to_picture("udo.png")
 
 parentNode1 = parentNode
 
@@ -46,6 +45,9 @@ for index, item in enumerate(y):
         value = item
         child = Node(str(len(y) - index) + '\n' + aNode, parent=parentNode1)
     if item == "":
+            newNode = parentNode1.parent
+            if newNode == None:
+                continue
             parentNode1 = parentNode1.parent
             continue
     # child = Node(str(len(y) - index) + '\n' + value, parent=parentNode1)
@@ -54,7 +56,11 @@ for index, item in enumerate(y):
         if nextNode != None:
             parentNode1 = nextNode
             continue
-    parentNode1 = parentNode1.parent
+    newNode = parentNode1.parent
+    if newNode == None:
+        print('Null here ' + parentNode1.name)
+    else:
+        parentNode1 = newNode
 
 
 DotExporter(rootNode).to_picture("output.png")
